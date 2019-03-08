@@ -1,6 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[Ubuntu报错]]></title>
+    <url>%2Fpost%2Fbe0d86cc.html</url>
+    <content type="text"><![CDATA[Ubuntu添加源的时候报下面的错误时：sudo: add-apt-repository: command not found 依次安装： sudo apt-get install python-software-properties sudo apt install software-properties-common sudo apt-get update]]></content>
+      <categories>
+        <category>Ubuntu</category>
+      </categories>
+      <tags>
+        <tag>Ubuntu</tag>
+        <tag>服务器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Apache常用命令]]></title>
+    <url>%2Fpost%2F2a529d9a.html</url>
+    <content type="text"><![CDATA[重启：sudo apachectl restart 关闭：sudo apachectl stop 开启：sudo apachectl start]]></content>
+      <categories>
+        <category>Apache</category>
+      </categories>
+      <tags>
+        <tag>服务器</tag>
+        <tag>Apache</tag>
+        <tag>常用</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Ubuntu搭建Git服务器]]></title>
+    <url>%2Fpost%2F9505f26a.html</url>
+    <content type="text"><![CDATA[安装git：$ sudo apt-get install git 创建一个git用户，用来运行git服务，并为 git 用户设置密码：$ sudo adduser git 下面这样新建用户不会在/home/下生成用户文件夹 [root@localhost home]# useradd git [root@localhost home]# passwd git 服务器端创建 Git 仓库 设置 /home/git/git.git 为 Git 仓库然后把 Git 仓库的 owner 修改为 git [root@localhost home]# mkdir -p git/git.git [root@localhost home]# git init --bare git/git.git Initialized empty Git repository in /home/git/git.git/ [root@localhost home]# cd git/ [root@localhost git]# chown -R git:git git.git/ 从 Linux Git 服务器上 clone 项目：$ git clone git@192.168.1.35:/home/git/git.git 如果SSH用的不是默认的22端口，则需要使用以下的命令（假设SSH端口号是7700）： $ git clone ssh://git@192.168.1.35:7700/home/git/git.git 禁用shell登录：出于安全考虑，第二步创建的git用户不允许登录shell，这可以通过编辑/etc/passwd文件完成。找到类似下面的一行： git:x:1001:1001:,,,:/home/git:/bin/bash 改为： git:x:1001:1001:,,,:/home/git:/usr/bin/git-shell 这样，git用户可以正常通过ssh使用git，但无法登录shell，因为我们为git用户指定的git-shell每次一登录就自动退出。]]></content>
+      <categories>
+        <category>Git</category>
+      </categories>
+      <tags>
+        <tag>Git</tag>
+        <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Django部署]]></title>
+    <url>%2Fpost%2F60e45118.html</url>
+    <content type="text"><![CDATA[环境：Ubuntu 16.04.4, Django 2.0.4, Python 3.6.1, Nginx 1.10.3, uWSGI 5.4.0 为避免多个项目环境相互影响，部署在virtualenv下 环境安装注意：建议先不要安装python-dev sudo apt-get install nginx sudo pip install virtualenv pip install virtualenvwrapper 注意安装顺序。 配置virtualenvwrapper相关配置安装virtualenvwrapper之后不能直接使用，需要配置路径，首先找到对应的virtualenvwrapper.sh文件的路径: find / -name virtualenvwrapper.sh 路径为：/usr/local/bin/virtualenvwrapper.sh找到路径之后在/etc/profile中添加： export WORKON_HOME=/home/virtualenvs source /usr/local/bin/virtualenvwrapper.sh 保存之后： source /etc/profile 接下来就可以使用相关命令来操作。 uWSGI相关配置安装uWSGI在虚拟环境下安装，注意：如果python3环境下如果安装不上，在服务器上安装 sudo apt-get install libpython3.6-dev 安装完之后，再在虚拟环境下安装uWSGI，之后运行的时候也需要在虚拟环境下运行在项目目录下新建uwsgi.ini [uwsgi] chdir=/home/sites/mysite/ module=mysite.wsgi:application workers=5 pidfile=/home/sites/mysite/script/uwsgi.pid http=0.0.0.0:8080 static-map=/statics=/home/sites/mysite/statics uid=root gid=root master=true vacuum=true thunder-lock=true enable-threads=true harakiri=30 post-buffering=4096 daemonize=/home/sites/mysite/script/uwsgi.log socket=/home/sites/mysite/script/uwsgi.sock # 要跟nginx里面的uwsgi_pass一样 uwsgi部分常用命令： uwsgi --ini uwsgi.ini # 启动uwsgi配置 uwsgi --stop uwsgi.pid # 关闭uwsgi uwsgi --reload uwsgi.pid #重新加载配置 Nginx相关配置创建一个name.conf配置文件（nginx的默认配置目录为/etc/nginx/conf.d） nano /etc/nginx/conf.d/xxx.conf 配置文件信息如下： server { listen 80; server_name server_name; access_log /var/log/nginx/access.log; # Nginx日志配置 error_log /var/log/nginx/error.log; charset utf-8; gzip on; # 启用压缩 gzip_types text/plain application/x-javascript text/css text/java$ error_page 404 /404.html; # 错误页面 error_page 500 502 503 504 /50x.html; # 错误页面 client_max_body_size 75M; location / { include uwsgi_params; uwsgi_connect_timeout 30; uwsgi_pass unix:///home/sites/mysite/script/uwsgi.sock; } location /static/ { alias 静态文件路径; index 首页路径; } } 检查nginx语法问题: nginx -t 正确的话会出现： nginx: the configuration file /etc/nginx/nginx.conf syntax is ok nginx: configuration file /etc/nginx/nginx.conf test is successful nginx部分常用命令： /etc/init.d/nginx start #启动 /etc/init.d/nginx stop #关闭 /etc/init.d/nginx restart #重启 killall nginx /etc/init.d/nginx reload Django setting.py更改设置DEBUG = False STATIC_ROOT = os.path.join(BASE_DIR, &apos;statics&apos;) 启动打开虚拟环境，cd到uwsgi.ini所在目录下， uwsgi --ini uwsgi.ini /etc/init.d/nginx start 正常的话，就可以访问网站了静态文件收集：cd到manage.py所在目录下， python manage.py collectstatic]]></content>
+      <categories>
+        <category>Django</category>
+      </categories>
+      <tags>
+        <tag>Django</tag>
+        <tag>Python</tag>
+        <tag>部署</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[树莓派配置]]></title>
+    <url>%2Fpost%2Fcfe260ea.html</url>
+    <content type="text"><![CDATA[更换阿里云源sudo nano /etc/apt/sources.list 注释掉原来的源后，添加 deb http://mirrors.aliyun.com/raspbian/raspbian/jessie main non-free contrib deb-src http://mirrors.aliyun.com/raspbian/raspbian/jessie main non-free contrib 启用root账号sudo passwd root 根据提示设置密码，切换到root管理员 su root 更新sudo apt-get update &amp;&amp; apt-get upgrade -y]]></content>
+      <categories>
+        <category>树莓派</category>
+      </categories>
+      <tags>
+        <tag>配置</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[树莓派MacOS下安装系统]]></title>
+    <url>%2Fpost%2F6e4ab319.html</url>
+    <content type="text"><![CDATA[确认镜像位于当前目录下将SD卡插入电脑查看SD卡对应的设备文件和准备工作（如果使用SD/TF读卡器，以下操作类似）查看当前已挂载的卷： df -h 得到如下类似信息： Filesystem Size Used Avail Capacity Mounted on /dev/disk0s2 112Gi 96Gi 15Gi 87% / devfs 183Ki 183Ki 0Bi 100% /dev map -hosts 0Bi 0Bi 0Bi 100% /net map auto_home 0Bi 0Bi 0Bi 100% /home /dev/disk1s1 15Gi 2.3Mi 15Gi 1% /Volumes/未命名 对比Size和Name可以找到SD卡的分区在系统里对应的设备文件（这里是/dev/disk1s1），如果你有多个分区，可能还会有disk1s2之类的。使用diskutil unmount将这些分区卸载： diskutil unmount /dev/disk1s1 确认设备： diskutil list 得到如下类似信息： /dev/disk0 #: TYPE NAME SIZE IDENTIFIER 0: GUID_partition_scheme *121.3 GB disk0 1: EFI 209.7 MB disk0s1 2: Apple_HFS Macintosh HD 120.5 GB disk0s2 3: Apple_Boot Recovery HD 650.0 MB disk0s3 /dev/disk1 #: TYPE NAME SIZE IDENTIFIER 0: FDisk_partition_scheme *15.8 GB disk1 1: Windows_NTFS 未命名 15.8 GB disk1s1 使用dd命令将Raspbian系统刷入SD卡将Raspbian系统刷入SD卡：（需要特别特别注意disk后的数字，不能搞错，/dev/disk1s1是分区，/dev/disk1是块设备，/dev/rdisk1是原始字符设备） sudo dd bs=4m if=2013-02-09-wheezy-raspbian.img of=/dev/rdisk1 经过几分钟的等待，出现下面的提示，说明SD卡刷好了： 462+1 records in 462+1 records out 1939865600 bytes transferred in 163.133220 secs (11891297 bytes/sec) 卸载设备： diskutil unmountDisk /dev/disk1 得到如下信息，说明卸载成功： Unmount of all volumes on disk1 was successful 现在就可以拔下SD卡，插到树莓派上启动系统了！]]></content>
+      <categories>
+        <category>树莓派</category>
+      </categories>
+      <tags>
+        <tag>树莓派</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[Jenkins持续化集成，自动打包，OTA分发]]></title>
     <url>%2Fpost%2Ff7f1ad1.html</url>
     <content type="text"><![CDATA[整个流程是Jenkins设置自动定时运行脚本，打包生成ipa文件和plist文件，成功之后，自动发送钉钉消息给测试人员，测试人员打开下载地址，OTA安装。 环境：macOS10.12.5，Xcode 8.3.3，ruby2.4.0，java1.8.0 搭建Jenkins自动打包自动打包用的是一个自动打包的脚本：PPAutoPackageScript ，GitHub地址：https://github.com/jkpang/PPAutoPackageScriptPPAutoPackageScript在本地的用法见GitHub，作者写了详细的使用方法。整体来说没有难度，按步骤来就行。先把脚本里面需要自己修改的部分，修改完成之后，测试打包没问题，再继续下一步。注意：Xcode证书管理部分不要设置自动管理，否则会报错 OTA分发部分OTA分发，我是在本地搭建的服务器，目前OTA分发只支持Https，所以需要OpenSSL自制证书。后面有具体方法，先搭建服务器。 启动服务器macOS 自带apache服务，所以终端输入 sudo apachectl start ，浏览器输入http://127.0.0.1，如果出现It Works!，OK，服务器启动成功。 修改配置服务器默认目录“/Library/WebServer/Documents/“，编辑“/etc/apache2/httpd.conf “，找到 DocumentRoot “/Library/WebServer/Documents” 改为你想作为服务器根目录的路径。其他修改如下图： OpenSSL自制证书生成服务器的私钥mkdir /private/etc/apache2/ssl cd /private/etc/apache2/ssl sudo openssl genrsa -out server.key 1024 生成签署申请sudo openssl req -new -key server.key -out server.csr (需要输入多个项目，其中Common Name为服务器的域名或IP) 生成CA私钥sudo openssl genrsa -out ca.key 1024 用CA的私钥产生CA的自签署证书sudo openssl req -new -x509 -days 365 -key ca.key -out ca.crt 创建demoCAsudo mkdir demoCA cd demoCA mkdir newcerts 创建文件index.txt和serial，serial内容为01，index.txt为空(index.txt必须为空，否则后报错)返回ssl文件夹 sudo openssl ca -in server.csr -out server.crt -cert ca.crt -keyfile ca.key 目前为止生成了server.crt，server.key，ca.crt文件，位置分别为“/private/etc/apache2/ssl/server.crt”，“/private/etc/apache2/ssl/server.key”，ca.crt 放在文件根目录(也就是前面DocumentRoot文件夹中)。 配置服务器的SSL服务编辑/private/etc/apache2/httpd.conf，去掉下面几个项目的注释(去掉前面的‘#’) LoadModule ssl_module libexec/apache2/mod_ssl.so LoadModule socache_shmcb_module libexec/apache2/mod_socache_shmcb.so Include /private/etc/apache2/extra/httpd-ssl.conf Include /private/etc/apache2/extra/httpd-vhosts.conf 编辑/private/etc/apache2/extra/httpd-ssl.conf修改下面两项的路径，改为刚才ssl证书存放的路径，如下： SSLCertificateFile &quot;/private/etc/apache2/ssl/server.crt&quot; SSLCertificateKeyFile &quot;/private/etc/apache2/ssl/server.key&quot; 编辑/private/etc/apache2/extra/httpd-vhosts.conf文件末尾添加： &lt;VirtualHost *:443&gt; SSLEngine on SSLCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL SSLCertificateFile /private/etc/apache2/ssl/server.crt SSLCertificateKeyFile /private/etc/apache2/ssl/server.key ServerName 192.168.1.35(服务器的IP) DocumentRoot &quot;同上面的DocumentRoot路径&quot; &lt;/VirtualHost&gt; 添加完之后 sudo apachectl configtest 有问题按照提示开启相关服务，没问题的话重启服务器 sudo apachectl restart 到此就可以https访问服务器了。 编写OTA安装需要的plist文件，以及服务器页面在服务器的根目录(DocumentRoot目录)下，新建plist文件，命名为manifest.plist文件根据自己的情况修改，两个图片地址可要可不要，文件模版如下： &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt; &lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt; &lt;plist version=&quot;1.0&quot;&gt; &lt;dict&gt; &lt;key&gt;items&lt;/key&gt; &lt;array&gt; &lt;dict&gt; &lt;key&gt;assets&lt;/key&gt; &lt;array&gt; &lt;dict&gt; &lt;key&gt;kind&lt;/key&gt; &lt;string&gt;software-package&lt;/string&gt; &lt;key&gt;url&lt;/key&gt; &lt;string&gt;https://192.168.1.35/pay.ipa&lt;/string&gt; &lt;/dict&gt; &lt;dict&gt; &lt;key&gt;kind&lt;/key&gt; &lt;string&gt;display-image&lt;/string&gt; &lt;key&gt;url&lt;/key&gt; &lt;string&gt;https://192.168.1.35/pay57.png&lt;/string&gt; &lt;/dict&gt; &lt;dict&gt; &lt;key&gt;kind&lt;/key&gt; &lt;string&gt;full-size-image&lt;/string&gt; &lt;key&gt;url&lt;/key&gt; &lt;string&gt;https://192.168.1.35/pay512.png&lt;/string&gt; &lt;/dict&gt; &lt;/array&gt; &lt;key&gt;metadata&lt;/key&gt; &lt;dict&gt; &lt;key&gt;bundle-identifier&lt;/key&gt; &lt;string&gt;打包的bundleidentifier&lt;/string&gt; &lt;key&gt;bundle-version&lt;/key&gt; &lt;string&gt;app版本号&lt;/string&gt; &lt;key&gt;kind&lt;/key&gt; &lt;string&gt;software&lt;/string&gt; &lt;key&gt;title&lt;/key&gt; &lt;string&gt;app名称&lt;/string&gt; &lt;/dict&gt; &lt;/dict&gt; &lt;/array&gt; &lt;/dict&gt; &lt;/plist&gt; plist文件创建后，再新建index.html，要包含app的下载地址和SSL证书的下载地址，其他部分自己写，下载地址如下： &lt;a href=&quot;itms-services://?action=download-manifest&amp;url=https://192.168.1.35/manifest.plist&quot;&gt;appName&lt;/a&gt; &lt;a href=&quot;http://192.168.1.35/ca.crt&quot;&gt;安装SSL证书&lt;/a&gt; 到目前为止，所有电脑上的设置结束了，可以把第二步测试生成的adhoc版app和ca.crt 文件，放在服务区根目录下，测试一下OTA安装是否可用。 测试：手机跟电脑在同一个局域网内，手机访问服务器的页面，先点击安装SSL证书，安装证书，然后在设置——&gt;通用——&gt;描述文件，设置刚才安装的证书为信任。接下来最重要的一步，设置——&gt;通用——&gt;关于本机，最下面的证书信任设置，再次设置信任。这个时候再返回网页才能下载安装app。否则会出现”无法连接***”。测试没有问题，进行下一步。 所有流程串起来这一步需要把Jenkins和OTA分发服务器，钉钉连通，整个流程走通PPAutoPackageScript 脚本除了作者建议修改的部分外，我们还需要根据需求稍作修改。首先，修改输出ipa路径，改为服务器的根目录，如图：这样输出的ipa文件直接就在根目录，不需要再复制ipa文件到根目录下，路径要和plist文件里的下载路径一样。但是还有一个问题，plist文件中，bundle-identifier还好，一个项目中基本上不会修改，但是版本号会经常变。我的解决方法比较笨，直接重新生成plist文件，在脚本ipa文件输出成功之后打开输出目录之前（open $export_path，这一步的前面）添加如下代码，仅供参考： cd $export_path cat &lt;&lt; EOF &gt; manifest.plist &lt;...&gt; &lt;key&gt;url&lt;/key&gt; &lt;string&gt;https://192.168.1.35/App/v$bundle_version/${ipa_name}.ipa&lt;/string&gt; &lt;...&gt; &lt;dict&gt; &lt;key&gt;bundle-identifier&lt;/key&gt; &lt;string&gt;打包的bundleidentifier&lt;/string&gt; &lt;key&gt;bundle-version&lt;/key&gt; &lt;string&gt;$bundle_version&lt;/string&gt; &lt;key&gt;kind&lt;/key&gt; &lt;string&gt;software&lt;/string&gt; &lt;key&gt;title&lt;/key&gt; &lt;string&gt;$scheme_name&lt;/string&gt; &lt;...&gt; EOF &lt;…&gt;部分跟前面的plist模版一样，不再重复，可以直接复制模版修改。这里的下载路径包括脚本里的export_path也即输出路径，根据自己的需求修改，如果是直接生成在根目录下，https://192.168.1.35/${ipa_name}.ipa这样写，生成的新ipa文件会覆盖旧的。我这里是让它每次根据版本号输出到不同的文件夹。 脚本文件修改完毕之后，登陆Jenkins，进入之前建的项目中，点击配置，在钉钉通知消息这一步的前面增加构建步骤，如图：第一行是打开脚本所在的位置，第二行运行脚本。OK，保存，返回项目点击立即构建。测试没有问题之后，再在配置里面设置定时构建，语法点击输入框后面的问号有参考。以上就是整个全部流程，自己正在用，网上好多步骤不完整或是比较老，出现错误参考每一步的 注意 部分，特别要注意iOS10 出现无法连接到***的错误！！！。有错误的地方请指正，互相交流。]]></content>
