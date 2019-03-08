@@ -22,8 +22,8 @@
       </categories>
       <tags>
         <tag>iOS</tag>
-        <tag>Jenkins</tag>
         <tag>钉钉</tag>
+        <tag>Jenkins</tag>
       </tags>
   </entry>
   <entry>
@@ -34,8 +34,8 @@
         <category>Tools</category>
       </categories>
       <tags>
-        <tag>CocoaPods</tag>
         <tag>iOS</tag>
+        <tag>CocoaPods</tag>
       </tags>
   </entry>
 </search>
