@@ -5,9 +5,9 @@
   
   <link href="/atom.xml" rel="self"/>
   
-  <link href="http://yoursite.com/"/>
-  <updated>2019-03-07T16:54:00.315Z</updated>
-  <id>http://yoursite.com/</id>
+  <link href="https://blog.travelfun.top/"/>
+  <updated>2019-03-08T02:29:17.838Z</updated>
+  <id>https://blog.travelfun.top/</id>
   
   <author>
     <name>Yu Zhibo</name>
@@ -18,10 +18,10 @@
   
   <entry>
     <title>Jenkins持续化集成，自动打包，OTA分发</title>
-    <link href="http://yoursite.com/2019/03/08/Jenkins%E6%8C%81%E7%BB%AD%E5%8C%96%E9%9B%86%E6%88%90%EF%BC%8C%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85%EF%BC%8COTA%E5%88%86%E5%8F%91/"/>
-    <id>http://yoursite.com/2019/03/08/Jenkins持续化集成，自动打包，OTA分发/</id>
+    <link href="https://blog.travelfun.top/post/f7f1ad1.html"/>
+    <id>https://blog.travelfun.top/post/f7f1ad1.html</id>
     <published>2019-03-07T16:46:46.000Z</published>
-    <updated>2019-03-07T16:54:00.315Z</updated>
+    <updated>2019-03-08T02:29:17.838Z</updated>
     
     <content type="html"><![CDATA[<p>整个流程是Jenkins设置自动定时运行脚本，打包生成ipa文件和plist文件，成功之后，自动发送钉钉消息给测试人员，测试人员打开下载地址，OTA安装。</p><blockquote><p>环境：macOS10.12.5，Xcode 8.3.3，ruby2.4.0，java1.8.0</p></blockquote><h3 id="搭建Jenkins"><a href="#搭建Jenkins" class="headerlink" title="搭建Jenkins"></a><a href="https://yzbwork.github.io/2019/03/08/Jenkins搭建/" target="_blank" rel="noopener">搭建Jenkins</a></h3><h3 id="自动打包"><a href="#自动打包" class="headerlink" title="自动打包"></a>自动打包</h3><p>自动打包用的是一个自动打包的脚本：PPAutoPackageScript ，GitHub地址：<a href="https://github.com/jkpang/PPAutoPackageScript" target="_blank" rel="noopener">https://github.com/jkpang/PPAutoPackageScript</a><br>PPAutoPackageScript在本地的用法见GitHub，作者写了详细的使用方法。整体来说没有难度，按步骤来就行。先把脚本里面需要自己修改的部分，修改完成之后，测试打包没问题，再继续下一步。<br><strong><em>注意：Xcode证书管理部分不要设置自动管理，否则会报错</em></strong></p><h3 id="OTA分发部分"><a href="#OTA分发部分" class="headerlink" title="OTA分发部分"></a>OTA分发部分</h3><p>OTA分发，我是在本地搭建的服务器，目前OTA分发只支持Https，所以需要OpenSSL自制证书。后面有具体方法，先搭建服务器。</p><h4 id="启动服务器"><a href="#启动服务器" class="headerlink" title="启动服务器"></a>启动服务器</h4><p>macOS 自带apache服务，所以终端输入 sudo apachectl start ，浏览器输入<a href="http://127.0.0.1" target="_blank" rel="noopener">http://127.0.0.1</a>，如果出现It Works!，OK，服务器启动成功。</p><h4 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h4><p>服务器默认目录<strong>“/Library/WebServer/Documents/“</strong>，编辑<strong>“/etc/apache2/httpd.conf “</strong>，找到</p><blockquote><p>DocumentRoot “/Library/WebServer/Documents”<br> <directory " library webserver documents"></directory></p></blockquote><p>改为你想作为服务器根目录的路径。<br>其他修改如下图：<br><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c9eca389d6d?w=1080&amp;h=1020&amp;f=png&amp;s=253214" alt="截图1.png"></p><h4 id="OpenSSL自制证书"><a href="#OpenSSL自制证书" class="headerlink" title="OpenSSL自制证书"></a>OpenSSL自制证书</h4><h5 id="生成服务器的私钥"><a href="#生成服务器的私钥" class="headerlink" title="生成服务器的私钥"></a>生成服务器的私钥</h5><pre><code>mkdir /private/etc/apache2/sslcd /private/etc/apache2/sslsudo openssl genrsa -out server.key 1024</code></pre><h5 id="生成签署申请"><a href="#生成签署申请" class="headerlink" title="生成签署申请"></a>生成签署申请</h5><pre><code>sudo openssl req -new -key server.key -out server.csr</code></pre><p>(需要输入多个项目，其中Common Name为服务器的域名或IP)</p><h5 id="生成CA私钥"><a href="#生成CA私钥" class="headerlink" title="生成CA私钥"></a>生成CA私钥</h5><pre><code>sudo openssl genrsa  -out ca.key 1024</code></pre><h5 id="用CA的私钥产生CA的自签署证书"><a href="#用CA的私钥产生CA的自签署证书" class="headerlink" title="用CA的私钥产生CA的自签署证书"></a>用CA的私钥产生CA的自签署证书</h5><pre><code>sudo openssl req  -new -x509 -days 365 -key ca.key -out ca.crt</code></pre><h5 id="创建demoCA"><a href="#创建demoCA" class="headerlink" title="创建demoCA"></a>创建demoCA</h5><pre><code>sudo mkdir demoCAcd demoCAmkdir newcerts</code></pre><p>创建文件index.txt和serial，serial内容为01，index.txt为空(<strong><em>index.txt必须为空，否则后报错</em></strong>)<br>返回ssl文件夹</p><pre><code>sudo openssl ca -in server.csr -out server.crt -cert ca.crt -keyfile ca.key</code></pre><p>目前为止生成了server.crt，server.key，ca.crt文件，位置分别为<strong>“/private/etc/apache2/ssl/server.crt”</strong>，<strong>“/private/etc/apache2/ssl/server.key”</strong>，ca.crt 放在文件根目录(也就是前面DocumentRoot文件夹中)。</p><h4 id="配置服务器的SSL服务"><a href="#配置服务器的SSL服务" class="headerlink" title="配置服务器的SSL服务"></a>配置服务器的SSL服务</h4><p>编辑/private/etc/apache2/httpd.conf，去掉下面几个项目的注释(去掉前面的‘#’)</p><pre><code>LoadModule ssl_module libexec/apache2/mod_ssl.so LoadModule socache_shmcb_module libexec/apache2/mod_socache_shmcb.soInclude /private/etc/apache2/extra/httpd-ssl.conf Include /private/etc/apache2/extra/httpd-vhosts.conf</code></pre><h5 id="编辑-private-etc-apache2-extra-httpd-ssl-conf"><a href="#编辑-private-etc-apache2-extra-httpd-ssl-conf" class="headerlink" title="编辑/private/etc/apache2/extra/httpd-ssl.conf"></a>编辑/private/etc/apache2/extra/httpd-ssl.conf</h5><p>修改下面两项的路径，改为刚才ssl证书存放的路径，如下：</p><pre><code>SSLCertificateFile &quot;/private/etc/apache2/ssl/server.crt&quot;SSLCertificateKeyFile &quot;/private/etc/apache2/ssl/server.key&quot;</code></pre><h5 id="编辑-private-etc-apache2-extra-httpd-vhosts-conf"><a href="#编辑-private-etc-apache2-extra-httpd-vhosts-conf" class="headerlink" title="编辑/private/etc/apache2/extra/httpd-vhosts.conf"></a>编辑/private/etc/apache2/extra/httpd-vhosts.conf</h5><p>文件末尾添加：</p><pre><code>&lt;VirtualHost *:443&gt;     SSLEngine on     SSLCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL     SSLCertificateFile /private/etc/apache2/ssl/server.crt    SSLCertificateKeyFile /private/etc/apache2/ssl/server.key     ServerName 192.168.1.35(服务器的IP)    DocumentRoot &quot;同上面的DocumentRoot路径&quot; &lt;/VirtualHost&gt;</code></pre><p>添加完之后</p><pre><code>sudo apachectl configtest</code></pre><p>有问题按照提示开启相关服务，没问题的话重启服务器</p><pre><code>sudo apachectl restart</code></pre><p>到此就可以https访问服务器了。</p><h4 id="编写OTA安装需要的plist文件，以及服务器页面"><a href="#编写OTA安装需要的plist文件，以及服务器页面" class="headerlink" title="编写OTA安装需要的plist文件，以及服务器页面"></a>编写OTA安装需要的plist文件，以及服务器页面</h4><p>在服务器的根目录(DocumentRoot目录)下，新建plist文件，命名为manifest.plist文件根据自己的情况修改，两个图片地址可要可不要，文件模版如下：</p><pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;&lt;plist version=&quot;1.0&quot;&gt;&lt;dict&gt;&lt;key&gt;items&lt;/key&gt;&lt;array&gt;    &lt;dict&gt;        &lt;key&gt;assets&lt;/key&gt;        &lt;array&gt;            &lt;dict&gt;                &lt;key&gt;kind&lt;/key&gt;                &lt;string&gt;software-package&lt;/string&gt;                &lt;key&gt;url&lt;/key&gt;                &lt;string&gt;https://192.168.1.35/pay.ipa&lt;/string&gt;            &lt;/dict&gt;            &lt;dict&gt;                &lt;key&gt;kind&lt;/key&gt;                &lt;string&gt;display-image&lt;/string&gt;                &lt;key&gt;url&lt;/key&gt;                &lt;string&gt;https://192.168.1.35/pay57.png&lt;/string&gt;            &lt;/dict&gt;            &lt;dict&gt;                &lt;key&gt;kind&lt;/key&gt;                &lt;string&gt;full-size-image&lt;/string&gt;                &lt;key&gt;url&lt;/key&gt;                &lt;string&gt;https://192.168.1.35/pay512.png&lt;/string&gt;            &lt;/dict&gt;        &lt;/array&gt;        &lt;key&gt;metadata&lt;/key&gt;        &lt;dict&gt;            &lt;key&gt;bundle-identifier&lt;/key&gt;            &lt;string&gt;打包的bundleidentifier&lt;/string&gt;            &lt;key&gt;bundle-version&lt;/key&gt;            &lt;string&gt;app版本号&lt;/string&gt;            &lt;key&gt;kind&lt;/key&gt;            &lt;string&gt;software&lt;/string&gt;            &lt;key&gt;title&lt;/key&gt;            &lt;string&gt;app名称&lt;/string&gt;        &lt;/dict&gt;    &lt;/dict&gt;&lt;/array&gt;&lt;/dict&gt;&lt;/plist&gt;</code></pre><p> plist文件创建后，再新建index.html，要包含app的下载地址和SSL证书的下载地址，其他部分自己写，下载地址如下：</p><pre><code>&lt;a href=&quot;itms-services://?action=download-manifest&amp;url=https://192.168.1.35/manifest.plist&quot;&gt;appName&lt;/a&gt;  &lt;a href=&quot;http://192.168.1.35/ca.crt&quot;&gt;安装SSL证书&lt;/a&gt;</code></pre><p>到目前为止，所有电脑上的设置结束了，可以把第二步测试生成的adhoc版app和ca.crt 文件，放在服务区根目录下，测试一下OTA安装是否可用。</p><h4 id="测试："><a href="#测试：" class="headerlink" title="测试："></a>测试：</h4><p>手机跟电脑在同一个局域网内，手机访问服务器的页面，先点击<strong>安装SSL证书</strong>，安装证书，然后在<strong>设置</strong>——&gt;<strong>通用</strong>——&gt;<strong>描述文件</strong>，设置刚才安装的证书为信任。接下来最重要的一步，<strong>设置</strong>——&gt;<strong>通用</strong>——&gt;<strong>关于本机</strong>，最下面的证书信任设置，再次设置信任。这个时候再返回网页才能下载安装app。否则会出现”无法连接***”。测试没有问题，进行下一步。</p><h3 id="所有流程串起来"><a href="#所有流程串起来" class="headerlink" title="所有流程串起来"></a>所有流程串起来</h3><p>这一步需要把Jenkins和OTA分发服务器，钉钉连通，整个流程走通<br>PPAutoPackageScript 脚本除了作者建议修改的部分外，我们还需要根据需求稍作修改。<br>首先，修改输出ipa路径，改为服务器的根目录，如图：<br><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c9eca4602e6?w=561&amp;h=210&amp;f=png&amp;s=59876" alt="修改输出ipa路径.png"><br>这样输出的ipa文件直接就在根目录，不需要再复制ipa文件到根目录下，路径要和plist文件里的下载路径一样。但是还有一个问题，plist文件中，bundle-identifier还好，一个项目中基本上不会修改，但是版本号会经常变。我的解决方法比较笨，直接重新生成plist文件，在脚本ipa文件输出成功之后打开输出目录之前（open $export_path，这一步的前面）添加如下代码，仅供参考：</p><pre><code>cd $export_pathcat &lt;&lt; EOF &gt; manifest.plist&lt;...&gt; &lt;key&gt;url&lt;/key&gt;&lt;string&gt;https://192.168.1.35/App/v$bundle_version/${ipa_name}.ipa&lt;/string&gt;&lt;...&gt;&lt;dict&gt;&lt;key&gt;bundle-identifier&lt;/key&gt;&lt;string&gt;打包的bundleidentifier&lt;/string&gt;&lt;key&gt;bundle-version&lt;/key&gt;&lt;string&gt;$bundle_version&lt;/string&gt;&lt;key&gt;kind&lt;/key&gt;&lt;string&gt;software&lt;/string&gt;&lt;key&gt;title&lt;/key&gt;&lt;string&gt;$scheme_name&lt;/string&gt;&lt;...&gt;EOF</code></pre><p> &lt;…&gt;部分跟前面的plist模版一样，不再重复，可以直接复制模版修改。这里的下载路径包括脚本里的export_path也即输出路径，根据自己的需求修改，如果是直接生成在根目录下，<a href="https://192.168.1.35/${ipa_name}.ipa" target="_blank" rel="noopener">https://192.168.1.35/${ipa_name}.ipa</a>这样写，生成的新ipa文件会覆盖旧的。我这里是让它每次根据版本号输出到不同的文件夹。</p><p>脚本文件修改完毕之后，登陆Jenkins，进入之前建的项目中，点击配置，在钉钉通知消息这一步的前面<strong>增加构建步骤</strong>，如图：<br><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c9eca4af431?w=705&amp;h=320&amp;f=png&amp;s=22201" alt="增加构建步骤.png"><br>第一行是打开脚本所在的位置，第二行运行脚本。<br>OK，保存，返回项目点击<strong>立即构建</strong>。测试没有问题之后，再在配置里面设置定时构建，语法点击输入框后面的问号有参考。<br>以上就是整个全部流程，自己正在用，网上好多步骤不完整或是比较老，出现错误参考每一步的 <strong><em>注意</em></strong> 部分，特别要注意iOS10 出现无法连接到***的错误！！！。有错误的地方请指正，互相交流。</p>]]></content>
     
@@ -31,23 +31,23 @@
     
     </summary>
     
-      <category term="Tools" scheme="http://yoursite.com/categories/Tools/"/>
+      <category term="Tools" scheme="https://blog.travelfun.top/categories/Tools/"/>
     
     
-      <category term="iOS" scheme="http://yoursite.com/tags/iOS/"/>
+      <category term="iOS" scheme="https://blog.travelfun.top/tags/iOS/"/>
     
-      <category term="Jenkins" scheme="http://yoursite.com/tags/Jenkins/"/>
+      <category term="Jenkins" scheme="https://blog.travelfun.top/tags/Jenkins/"/>
     
-      <category term="打包" scheme="http://yoursite.com/tags/%E6%89%93%E5%8C%85/"/>
+      <category term="打包" scheme="https://blog.travelfun.top/tags/%E6%89%93%E5%8C%85/"/>
     
   </entry>
   
   <entry>
     <title>Jenkins搭建</title>
-    <link href="http://yoursite.com/2019/03/08/Jenkins%E6%90%AD%E5%BB%BA/"/>
-    <id>http://yoursite.com/2019/03/08/Jenkins搭建/</id>
+    <link href="https://blog.travelfun.top/post/d6658693.html"/>
+    <id>https://blog.travelfun.top/post/d6658693.html</id>
     <published>2019-03-07T16:35:25.000Z</published>
-    <updated>2019-03-07T16:42:06.968Z</updated>
+    <updated>2019-03-08T02:29:17.836Z</updated>
     
     <content type="html"><![CDATA[<h4 id="Jenkins搭建"><a href="#Jenkins搭建" class="headerlink" title="Jenkins搭建"></a>Jenkins搭建</h4><p>下载对应的安装包安装即可，或者下载war包，终端运行。war包运行之后，终端会有一串稍微长的字符串，复制下来，这是Jenkins第一次运行时的密码。Jenkins运行安装完推荐的插件之后，新建，选择第一个，保存，后面再配置。<br><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c7775f064f6?w=563&amp;h=283&amp;f=png&amp;s=61666" alt="EAACFA0A-FA64-4BBB-A980-0F42D4DE1DB9.png"></p><h4 id="打开钉钉添加机器人，选择自定义"><a href="#打开钉钉添加机器人，选择自定义" class="headerlink" title="打开钉钉添加机器人，选择自定义"></a>打开钉钉添加机器人，选择自定义</h4><p><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c7776192247?w=706&amp;h=342&amp;f=png&amp;s=31081" alt="C900D4D4-DE1A-439E-87C5-EE824B111FD0.png"><br><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c77767353ee?w=604&amp;h=411&amp;f=png&amp;s=77145" alt="E39D91F6-08F8-4305-A6D0-7F403369C2D0.png"><br><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c777758b068?w=607&amp;h=481&amp;f=png&amp;s=45830" alt="CF45A79A-1DFD-4D80-8623-0781F11FBD5D.png"></p><ol start="3"><li>回到jenkins 刚刚新建的项目，选择配置，跟钉钉连通时，以下方法二选一即可：<h5 id="方法一："><a href="#方法一：" class="headerlink" title="方法一："></a>方法一：</h5>如果下载的插件是 <strong>DingDing[钉钉]Plugin</strong> ， 在构建后操作里面，选择<strong>钉钉通知器</strong>，如图：<br><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c77778c8031?w=616&amp;h=293&amp;f=png&amp;s=35298" alt="0B81147F-472C-471D-8373-BD3FF567EAE7.png"><br><strong><em>注意：Jenkins URL地址后面要加“／”。</em></strong><h5 id="方法二："><a href="#方法二：" class="headerlink" title="方法二："></a>方法二：</h5>如果下载的插件是 <strong>HTTP Request Plugin</strong>，在构建增加构建步骤时选择<strong>HTTP Request</strong><br><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c7777d9a2db?w=599&amp;h=634&amp;f=png&amp;s=61002" alt="EF809749-2C71-4079-8DB9-EB0277D33C83.png"><br>content-type要选utf-8，body按照钉钉的消息格式设置，机器人的配置说明里面有格式。</li><li>保存之后，点击立即构建，钉钉机器人就可以发出消息了<br>方法一对应的消息比较单调，方法二可以设置多种格式。<br>参考：<br><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c77ae1f8faf?w=334&amp;h=103&amp;f=png&amp;s=12583" alt="方法一.png"><br><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c77ae2ce4f1?w=194&amp;h=46&amp;f=png&amp;s=1137" alt="方法二.png"><br><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c77bb29f90b?w=367&amp;h=391&amp;f=png&amp;s=125607" alt="方法二.png"><br>其它格式的参考钉钉机器人设置说明</li></ol>]]></content>
     
@@ -57,23 +57,23 @@
     
     </summary>
     
-      <category term="Tools" scheme="http://yoursite.com/categories/Tools/"/>
+      <category term="Tools" scheme="https://blog.travelfun.top/categories/Tools/"/>
     
     
-      <category term="iOS" scheme="http://yoursite.com/tags/iOS/"/>
+      <category term="iOS" scheme="https://blog.travelfun.top/tags/iOS/"/>
     
-      <category term="Jenkins" scheme="http://yoursite.com/tags/Jenkins/"/>
+      <category term="Jenkins" scheme="https://blog.travelfun.top/tags/Jenkins/"/>
     
-      <category term="钉钉" scheme="http://yoursite.com/tags/%E9%92%89%E9%92%89/"/>
+      <category term="钉钉" scheme="https://blog.travelfun.top/tags/%E9%92%89%E9%92%89/"/>
     
   </entry>
   
   <entry>
     <title>CocoaPods 安装、使用</title>
-    <link href="http://yoursite.com/2016/06/17/CocoaPods-%E5%AE%89%E8%A3%85%E3%80%81%E4%BD%BF%E7%94%A8/"/>
-    <id>http://yoursite.com/2016/06/17/CocoaPods-安装、使用/</id>
+    <link href="https://blog.travelfun.top/post/faa5897a.html"/>
+    <id>https://blog.travelfun.top/post/faa5897a.html</id>
     <published>2016-06-17T09:03:00.000Z</published>
-    <updated>2019-03-07T13:43:22.424Z</updated>
+    <updated>2019-03-08T02:29:17.834Z</updated>
     
     <content type="html"><![CDATA[<h3 id="安装ruby"><a href="#安装ruby" class="headerlink" title="安装ruby"></a>安装ruby</h3><p>下载安装CocoaPods需要Ruby环境, Mac  OS本身自带Ruby，但还是更新一下保险</p><h4 id="查看下当前ruby版本：打开终端输入-ruby-v"><a href="#查看下当前ruby版本：打开终端输入-ruby-v" class="headerlink" title="查看下当前ruby版本：打开终端输入 ruby -v"></a>查看下当前ruby版本：打开终端输入 ruby -v</h4><h4 id="更新ruby"><a href="#更新ruby" class="headerlink" title="更新ruby"></a>更新ruby</h4><p>终端输入如下命令（把Ruby镜像指向taobao镜像，避免被墙）</p><pre><code>gem sources --remove https://rubygems.org/ </code></pre><p><del>gem sources -a <a href="https://ruby.taobao.org/" target="_blank" rel="noopener">https://ruby.taobao.org/</a></del> （已停止，更换为下面的）</p><pre><code>gem sources -a https://gems.ruby-china.comgem sources -l  （查看当前镜像）</code></pre><p>如图：<br><img src="/images/Ruby更换镜像成功.png" alt></p><h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><pre><code>sudo gem install cocoapods </code></pre><p>成功会有“gem installed”的提示</p><h4 id="执行pod-install-命令"><a href="#执行pod-install-命令" class="headerlink" title="执行pod install 命令"></a>执行pod install 命令</h4><p>出现Setting up CocoaPods master repo，说明Cocoapods在将它的信息下载到 ~/.cocoapods里，<br>cd  到该目录里，用du -sh *命令来查看文件大小，每隔几分钟查看一次，这个目录最终大小是100多M，就是完成了。</p><h5 id="可能出现的错误"><a href="#可能出现的错误" class="headerlink" title="可能出现的错误"></a>可能出现的错误</h5><p>在运行 “sudo gem install cocoapods” 的时候出现问题：ERROR: While executing gem … (Errno::EPERM)<br>Operation not permitted - /usr/bin/fuzzy_match</p><p>则可以改为：</p><pre><code>sudo gem install -n /usr/local/bin cocoapods</code></pre><h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>在终端中进入（cd命令）你项目所在目录，然后在当前目录下，利用vim创建Podfile，运行：<br>$ vim Podfile<br>然后在Podfile文件中输入以下文字：<br>platform :ios, ‘7.0’<br>pod “AFNetworking”, “~&gt; 2.0”<br>注意，这段文字可以在AFNetworking的github页面找到。这两句文字的意思是，当前AFNetworking支持的iOS最高版本是iOS 7.0, 要下载的AFNetworking版本是2.0。</p><p>然后保存退出。vim环境下，保存退出命令是：<br>:wq</p><p>这时候，你会发现你的项目目录中，出现一个名字为Podfile的文件，而且文件内容就是你刚刚输入的内容。注意，Podfile文件应该和你的工程文件.xcodeproj在同一个目录下。</p><p>这时候，你就可以利用CocoPods下载AFNetworking类库了。还是在终端中的当前项目目录下，运行以下命令：<br>$ pod install</p><h4 id="编译运行一个包含CocoPods类库的项目"><a href="#编译运行一个包含CocoPods类库的项目" class="headerlink" title="编译运行一个包含CocoPods类库的项目"></a>编译运行一个包含CocoPods类库的项目</h4><p> 打开终端，进入所在目录，也就是和Podfile在同一目录下，输入<br>pod update<br>过一会儿（取决于网络状况），终端提示。原文件夹多了一个xxxx.xcworkspace，点击运行该文件即可编译。</p>]]></content>
     
@@ -83,12 +83,12 @@
     
     </summary>
     
-      <category term="Tools" scheme="http://yoursite.com/categories/Tools/"/>
+      <category term="Tools" scheme="https://blog.travelfun.top/categories/Tools/"/>
     
     
-      <category term="CocoaPods" scheme="http://yoursite.com/tags/CocoaPods/"/>
+      <category term="CocoaPods" scheme="https://blog.travelfun.top/tags/CocoaPods/"/>
     
-      <category term="iOS" scheme="http://yoursite.com/tags/iOS/"/>
+      <category term="iOS" scheme="https://blog.travelfun.top/tags/iOS/"/>
     
   </entry>
   
