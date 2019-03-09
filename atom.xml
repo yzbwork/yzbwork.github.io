@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://blog.travelfun.top/"/>
-  <updated>2019-03-08T07:27:55.598Z</updated>
+  <updated>2019-03-09T07:49:50.773Z</updated>
   <id>https://blog.travelfun.top/</id>
   
   <author>
@@ -15,6 +15,86 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>UITableView</title>
+    <link href="https://blog.travelfun.top/post/7e78edc3.html"/>
+    <id>https://blog.travelfun.top/post/7e78edc3.html</id>
+    <published>2019-03-09T07:30:10.000Z</published>
+    <updated>2019-03-09T07:49:50.773Z</updated>
+    
+    <content type="html"><![CDATA[<ol><li><p>在UITableViewController中self.view和self.tableView是指同一个view。</p></li><li><p>UITableView设置为group时，顶部会有空白距离，需要在heightforviewinsecetion内设置高为float类型的小数</p></li></ol>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;ol&gt;
+&lt;li&gt;&lt;p&gt;在UITableViewController中self.view和self.tableView是指同一个view。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;UITableView设置为group时，顶部会有空白距离，需要在heightforviewinsecet
+      
+    
+    </summary>
+    
+      <category term="iOS" scheme="https://blog.travelfun.top/categories/iOS/"/>
+    
+    
+      <category term="iOS" scheme="https://blog.travelfun.top/tags/iOS/"/>
+    
+      <category term="UITableView" scheme="https://blog.travelfun.top/tags/UITableView/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>HTTPS-适配</title>
+    <link href="https://blog.travelfun.top/post/86809e2e.html"/>
+    <id>https://blog.travelfun.top/post/86809e2e.html</id>
+    <published>2019-03-09T07:25:09.000Z</published>
+    <updated>2019-03-09T07:49:50.772Z</updated>
+    
+    <content type="html"><![CDATA[<h4 id="需要先检查服务器证书："><a href="#需要先检查服务器证书：" class="headerlink" title="需要先检查服务器证书："></a>需要先检查服务器证书：</h4><p>（三种方法，推荐最后一种）</p><h5 id="在腾讯云ATS上检测，"><a href="#在腾讯云ATS上检测，" class="headerlink" title="在腾讯云ATS上检测，"></a>在腾讯云ATS上检测，</h5><p>  <a href="https://www.qcloud.com/product/ssl" target="_blank" rel="noopener">https://www.qcloud.com/product/ssl</a></p><h5 id="直接看证书，注意证书签名算法，"><a href="#直接看证书，注意证书签名算法，" class="headerlink" title="直接看证书，注意证书签名算法，"></a>直接看证书，注意证书签名算法，</h5><p><img src="http://upload-images.jianshu.io/upload_images/1130084-94bff11cb1da8c10.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="1.png"></p><h5 id="mac终端检查，（以百度为例）"><a href="#mac终端检查，（以百度为例）" class="headerlink" title="mac终端检查，（以百度为例）"></a>mac终端检查，（以百度为例）</h5><pre><code>nscurl --ats-diagnostics https://baidu.com</code></pre><p>一堆测试结果，注意看Result是PASS的，<br>如：<br><img src="http://upload-images.jianshu.io/upload_images/1130084-17982d70cbe18c31.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="2.png"><br>这种result是通过的，说明需要在info.plist里面添加该属性为false，即可通过。</p><h4 id="在info-plist里面添加以下属性"><a href="#在info-plist里面添加以下属性" class="headerlink" title="在info.plist里面添加以下属性"></a>在info.plist里面添加以下属性</h4><p>（用到webview，最好在info.plist里面设置一下属性，这样UIwebview不用再单独设置）</p><pre><code>&lt;key&gt;NSAppTransportSecurity&lt;/key&gt; &lt;dict&gt;          &lt;key&gt;NSExceptionDomains&lt;/key&gt;          &lt;dict&gt;        &lt;key&gt;对应域名&lt;/key&gt;                        &lt;dict&gt;              &lt;key&gt;NSIncludesSubdomains&lt;/key&gt;              &lt;true/&gt;                                      &lt;key&gt;NSExceptionRequiresForwardSecrecy&lt;/key&gt;              &lt;false/&gt;                       &lt;/dict&gt;                   &lt;/dict&gt; &lt;/dict&gt;</code></pre><p>主要是<br><strong>NSExceptionRequiresForwardSecrecy</strong>，默认值为YES，置为NO后，访问该域名时TLS ciphers可以不支持完全正向保密（PFS）（注意: 腾讯云检测时候可能提示支持完整正向加密，但是如果算法是SHA-1，则需要设置改属性为NO）。</p><h4 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h4><blockquote><p>NSAllowsArbitraryLoads、<br>NSAllowsArbitraryLoadsForMedia、<br>NSAllowsArbitraryLoadsInWebContent、<br>NSExceptionAllowsInsecureHTTPLoads</p></blockquote><p>任一属性置为YES 或设置 <strong>NSExceptionMinimumTLSVersion</strong>，<br>都会触发App Store的额外审核并需要提交对应说明</p>]]></content>
+    
+    <summary type="html">
+    
+      HTTPS 适配，HTTPS证书检测
+    
+    </summary>
+    
+      <category term="iOS" scheme="https://blog.travelfun.top/categories/iOS/"/>
+    
+    
+      <category term="HTTPS" scheme="https://blog.travelfun.top/tags/HTTPS/"/>
+    
+      <category term="iOS" scheme="https://blog.travelfun.top/tags/iOS/"/>
+    
+      <category term="服务器证书" scheme="https://blog.travelfun.top/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AF%81%E4%B9%A6/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>添加pch</title>
+    <link href="https://blog.travelfun.top/post/f898aa72.html"/>
+    <id>https://blog.travelfun.top/post/f898aa72.html</id>
+    <published>2019-03-09T07:23:27.000Z</published>
+    <updated>2019-03-09T07:49:50.774Z</updated>
+    
+    <content type="html"><![CDATA[<p>Xcode6之后，pch预编译文件默认是不带的，需要自己创建pch文件</p><ol><li><p>新建之后选择 Project &gt; Build Settings &gt; 搜索 “Prefix Header“，</p></li><li><p>添加路径，项目名称／pch文件名称.pch<br>向pch添加全局的头文件之前，要加上 #ifdef __OBJC__  #end。<br>如：</p></li></ol><pre><code>    #import &lt;Availability.h&gt;    #ifndef __IPHONE_3_0    #warning &quot;This project uses features only available in iOS SDK 3.0 and later.&quot;    #endif    #ifdef __OBJC__    #import &lt;UIKit/UIKit.h&gt;    #import &lt;Foundation/Foundation.h&gt;    #endif这个宏定义的作用是保证只有OC文件可以调用pch里面的头文件，非OC语言]不能调用，比如.cpp，.mm。</code></pre><p>没有这个宏定义，代码中带有.cpp，.mm文件，将报错。NSObjCRuntime.h，NSObject.h，NSZone.h会编译异常。</p><ol start="3"><li><p>将Precompile Prefix Header为YES，预编译后的pch文件会被缓存起来，可以提高编译速度</p></li><li><p>Clean 然后 build 工程</p></li></ol>]]></content>
+    
+    <summary type="html">
+    
+      Xcode6之后，pch预编译文件默认是不带的，需要自己创建pch文件
+    
+    </summary>
+    
+      <category term="iOS" scheme="https://blog.travelfun.top/categories/iOS/"/>
+    
+    
+      <category term="iOS" scheme="https://blog.travelfun.top/tags/iOS/"/>
+    
+      <category term="pch" scheme="https://blog.travelfun.top/tags/pch/"/>
+    
+  </entry>
   
   <entry>
     <title>Ubuntu报错</title>
@@ -37,9 +117,9 @@
       <category term="Ubuntu" scheme="https://blog.travelfun.top/categories/Ubuntu/"/>
     
     
-      <category term="Ubuntu" scheme="https://blog.travelfun.top/tags/Ubuntu/"/>
-    
       <category term="服务器" scheme="https://blog.travelfun.top/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
+    
+      <category term="Ubuntu" scheme="https://blog.travelfun.top/tags/Ubuntu/"/>
     
   </entry>
   
@@ -67,9 +147,9 @@
       <category term="Apache" scheme="https://blog.travelfun.top/categories/Apache/"/>
     
     
-      <category term="服务器" scheme="https://blog.travelfun.top/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
-    
       <category term="Apache" scheme="https://blog.travelfun.top/tags/Apache/"/>
+    
+      <category term="服务器" scheme="https://blog.travelfun.top/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
     
       <category term="常用" scheme="https://blog.travelfun.top/tags/%E5%B8%B8%E7%94%A8/"/>
     
@@ -93,9 +173,9 @@
       <category term="Git" scheme="https://blog.travelfun.top/categories/Git/"/>
     
     
-      <category term="Git" scheme="https://blog.travelfun.top/tags/Git/"/>
-    
       <category term="Ubuntu" scheme="https://blog.travelfun.top/tags/Ubuntu/"/>
+    
+      <category term="Git" scheme="https://blog.travelfun.top/tags/Git/"/>
     
   </entry>
   
@@ -192,56 +272,6 @@
       <category term="Jenkins" scheme="https://blog.travelfun.top/tags/Jenkins/"/>
     
       <category term="打包" scheme="https://blog.travelfun.top/tags/%E6%89%93%E5%8C%85/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Jenkins搭建</title>
-    <link href="https://blog.travelfun.top/post/d6658693.html"/>
-    <id>https://blog.travelfun.top/post/d6658693.html</id>
-    <published>2019-03-07T16:35:25.000Z</published>
-    <updated>2019-03-08T07:27:01.531Z</updated>
-    
-    <content type="html"><![CDATA[<h4 id="Jenkins搭建"><a href="#Jenkins搭建" class="headerlink" title="Jenkins搭建"></a>Jenkins搭建</h4><p>下载对应的安装包安装即可，或者下载war包，终端运行。war包运行之后，终端会有一串稍微长的字符串，复制下来，这是Jenkins第一次运行时的密码。Jenkins运行安装完推荐的插件之后，新建，选择第一个，保存，后面再配置。<br><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c7775f064f6?w=563&amp;h=283&amp;f=png&amp;s=61666" alt="EAACFA0A-FA64-4BBB-A980-0F42D4DE1DB9.png"></p><h4 id="打开钉钉添加机器人，选择自定义"><a href="#打开钉钉添加机器人，选择自定义" class="headerlink" title="打开钉钉添加机器人，选择自定义"></a>打开钉钉添加机器人，选择自定义</h4><p><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c7776192247?w=706&amp;h=342&amp;f=png&amp;s=31081" alt="C900D4D4-DE1A-439E-87C5-EE824B111FD0.png"><br><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c77767353ee?w=604&amp;h=411&amp;f=png&amp;s=77145" alt="E39D91F6-08F8-4305-A6D0-7F403369C2D0.png"><br><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c777758b068?w=607&amp;h=481&amp;f=png&amp;s=45830" alt="CF45A79A-1DFD-4D80-8623-0781F11FBD5D.png"></p><ol start="3"><li>回到jenkins 刚刚新建的项目，选择配置，跟钉钉连通时，以下方法二选一即可：<h5 id="方法一："><a href="#方法一：" class="headerlink" title="方法一："></a>方法一：</h5>如果下载的插件是 <strong>DingDing[钉钉]Plugin</strong> ， 在构建后操作里面，选择<strong>钉钉通知器</strong>，如图：<br><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c77778c8031?w=616&amp;h=293&amp;f=png&amp;s=35298" alt="0B81147F-472C-471D-8373-BD3FF567EAE7.png"><br><strong><em>注意：Jenkins URL地址后面要加“／”。</em></strong><h5 id="方法二："><a href="#方法二：" class="headerlink" title="方法二："></a>方法二：</h5>如果下载的插件是 <strong>HTTP Request Plugin</strong>，在构建增加构建步骤时选择<strong>HTTP Request</strong><br><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c7777d9a2db?w=599&amp;h=634&amp;f=png&amp;s=61002" alt="EF809749-2C71-4079-8DB9-EB0277D33C83.png"><br>content-type要选utf-8，body按照钉钉的消息格式设置，机器人的配置说明里面有格式。</li><li>保存之后，点击立即构建，钉钉机器人就可以发出消息了<br>方法一对应的消息比较单调，方法二可以设置多种格式。<br>参考：<br><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c77ae1f8faf?w=334&amp;h=103&amp;f=png&amp;s=12583" alt="方法一.png"><br><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c77ae2ce4f1?w=194&amp;h=46&amp;f=png&amp;s=1137" alt="方法二.png"><br><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c77bb29f90b?w=367&amp;h=391&amp;f=png&amp;s=125607" alt="方法二.png"><br>其它格式的参考钉钉机器人设置说明</li></ol>]]></content>
-    
-    <summary type="html">
-    
-      了解Jenkins的安装，以及插件的安装
-    
-    </summary>
-    
-      <category term="Tools" scheme="https://blog.travelfun.top/categories/Tools/"/>
-    
-    
-      <category term="iOS" scheme="https://blog.travelfun.top/tags/iOS/"/>
-    
-      <category term="Jenkins" scheme="https://blog.travelfun.top/tags/Jenkins/"/>
-    
-      <category term="钉钉" scheme="https://blog.travelfun.top/tags/%E9%92%89%E9%92%89/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>CocoaPods 安装、使用</title>
-    <link href="https://blog.travelfun.top/post/faa5897a.html"/>
-    <id>https://blog.travelfun.top/post/faa5897a.html</id>
-    <published>2016-06-17T09:03:00.000Z</published>
-    <updated>2019-03-08T02:29:17.834Z</updated>
-    
-    <content type="html"><![CDATA[<h3 id="安装ruby"><a href="#安装ruby" class="headerlink" title="安装ruby"></a>安装ruby</h3><p>下载安装CocoaPods需要Ruby环境, Mac  OS本身自带Ruby，但还是更新一下保险</p><h4 id="查看下当前ruby版本：打开终端输入-ruby-v"><a href="#查看下当前ruby版本：打开终端输入-ruby-v" class="headerlink" title="查看下当前ruby版本：打开终端输入 ruby -v"></a>查看下当前ruby版本：打开终端输入 ruby -v</h4><h4 id="更新ruby"><a href="#更新ruby" class="headerlink" title="更新ruby"></a>更新ruby</h4><p>终端输入如下命令（把Ruby镜像指向taobao镜像，避免被墙）</p><pre><code>gem sources --remove https://rubygems.org/ </code></pre><p><del>gem sources -a <a href="https://ruby.taobao.org/" target="_blank" rel="noopener">https://ruby.taobao.org/</a></del> （已停止，更换为下面的）</p><pre><code>gem sources -a https://gems.ruby-china.comgem sources -l  （查看当前镜像）</code></pre><p>如图：<br><img src="/images/Ruby更换镜像成功.png" alt></p><h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><pre><code>sudo gem install cocoapods </code></pre><p>成功会有“gem installed”的提示</p><h4 id="执行pod-install-命令"><a href="#执行pod-install-命令" class="headerlink" title="执行pod install 命令"></a>执行pod install 命令</h4><p>出现Setting up CocoaPods master repo，说明Cocoapods在将它的信息下载到 ~/.cocoapods里，<br>cd  到该目录里，用du -sh *命令来查看文件大小，每隔几分钟查看一次，这个目录最终大小是100多M，就是完成了。</p><h5 id="可能出现的错误"><a href="#可能出现的错误" class="headerlink" title="可能出现的错误"></a>可能出现的错误</h5><p>在运行 “sudo gem install cocoapods” 的时候出现问题：ERROR: While executing gem … (Errno::EPERM)<br>Operation not permitted - /usr/bin/fuzzy_match</p><p>则可以改为：</p><pre><code>sudo gem install -n /usr/local/bin cocoapods</code></pre><h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>在终端中进入（cd命令）你项目所在目录，然后在当前目录下，利用vim创建Podfile，运行：<br>$ vim Podfile<br>然后在Podfile文件中输入以下文字：<br>platform :ios, ‘7.0’<br>pod “AFNetworking”, “~&gt; 2.0”<br>注意，这段文字可以在AFNetworking的github页面找到。这两句文字的意思是，当前AFNetworking支持的iOS最高版本是iOS 7.0, 要下载的AFNetworking版本是2.0。</p><p>然后保存退出。vim环境下，保存退出命令是：<br>:wq</p><p>这时候，你会发现你的项目目录中，出现一个名字为Podfile的文件，而且文件内容就是你刚刚输入的内容。注意，Podfile文件应该和你的工程文件.xcodeproj在同一个目录下。</p><p>这时候，你就可以利用CocoPods下载AFNetworking类库了。还是在终端中的当前项目目录下，运行以下命令：<br>$ pod install</p><h4 id="编译运行一个包含CocoPods类库的项目"><a href="#编译运行一个包含CocoPods类库的项目" class="headerlink" title="编译运行一个包含CocoPods类库的项目"></a>编译运行一个包含CocoPods类库的项目</h4><p> 打开终端，进入所在目录，也就是和Podfile在同一目录下，输入<br>pod update<br>过一会儿（取决于网络状况），终端提示。原文件夹多了一个xxxx.xcworkspace，点击运行该文件即可编译。</p>]]></content>
-    
-    <summary type="html">
-    
-      iOS常用第三方管理工具CocoaPods的安装及使用
-    
-    </summary>
-    
-      <category term="Tools" scheme="https://blog.travelfun.top/categories/Tools/"/>
-    
-    
-      <category term="CocoaPods" scheme="https://blog.travelfun.top/tags/CocoaPods/"/>
-    
-      <category term="iOS" scheme="https://blog.travelfun.top/tags/iOS/"/>
     
   </entry>
   

@@ -1,6 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[UITableView]]></title>
+    <url>%2Fpost%2F7e78edc3.html</url>
+    <content type="text"><![CDATA[在UITableViewController中self.view和self.tableView是指同一个view。 UITableView设置为group时，顶部会有空白距离，需要在heightforviewinsecetion内设置高为float类型的小数]]></content>
+      <categories>
+        <category>iOS</category>
+      </categories>
+      <tags>
+        <tag>iOS</tag>
+        <tag>UITableView</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[HTTPS-适配]]></title>
+    <url>%2Fpost%2F86809e2e.html</url>
+    <content type="text"><![CDATA[需要先检查服务器证书：（三种方法，推荐最后一种） 在腾讯云ATS上检测， https://www.qcloud.com/product/ssl 直接看证书，注意证书签名算法， mac终端检查，（以百度为例）nscurl --ats-diagnostics https://baidu.com 一堆测试结果，注意看Result是PASS的，如：这种result是通过的，说明需要在info.plist里面添加该属性为false，即可通过。 在info.plist里面添加以下属性（用到webview，最好在info.plist里面设置一下属性，这样UIwebview不用再单独设置） &lt;key&gt;NSAppTransportSecurity&lt;/key&gt; &lt;dict&gt; &lt;key&gt;NSExceptionDomains&lt;/key&gt; &lt;dict&gt; &lt;key&gt;对应域名&lt;/key&gt; &lt;dict&gt; &lt;key&gt;NSIncludesSubdomains&lt;/key&gt; &lt;true/&gt; &lt;key&gt;NSExceptionRequiresForwardSecrecy&lt;/key&gt; &lt;false/&gt; &lt;/dict&gt; &lt;/dict&gt; &lt;/dict&gt; 主要是NSExceptionRequiresForwardSecrecy，默认值为YES，置为NO后，访问该域名时TLS ciphers可以不支持完全正向保密（PFS）（注意: 腾讯云检测时候可能提示支持完整正向加密，但是如果算法是SHA-1，则需要设置改属性为NO）。 注意 NSAllowsArbitraryLoads、NSAllowsArbitraryLoadsForMedia、NSAllowsArbitraryLoadsInWebContent、NSExceptionAllowsInsecureHTTPLoads 任一属性置为YES 或设置 NSExceptionMinimumTLSVersion，都会触发App Store的额外审核并需要提交对应说明]]></content>
+      <categories>
+        <category>iOS</category>
+      </categories>
+      <tags>
+        <tag>HTTPS</tag>
+        <tag>iOS</tag>
+        <tag>服务器证书</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[添加pch]]></title>
+    <url>%2Fpost%2Ff898aa72.html</url>
+    <content type="text"><![CDATA[Xcode6之后，pch预编译文件默认是不带的，需要自己创建pch文件 新建之后选择 Project &gt; Build Settings &gt; 搜索 “Prefix Header“， 添加路径，项目名称／pch文件名称.pch向pch添加全局的头文件之前，要加上 #ifdef __OBJC__ #end。如： #import &lt;Availability.h&gt; #ifndef __IPHONE_3_0 #warning &quot;This project uses features only available in iOS SDK 3.0 and later.&quot; #endif #ifdef __OBJC__ #import &lt;UIKit/UIKit.h&gt; #import &lt;Foundation/Foundation.h&gt; #endif 这个宏定义的作用是保证只有OC文件可以调用pch里面的头文件，非OC语言]不能调用，比如.cpp，.mm。 没有这个宏定义，代码中带有.cpp，.mm文件，将报错。NSObjCRuntime.h，NSObject.h，NSZone.h会编译异常。 将Precompile Prefix Header为YES，预编译后的pch文件会被缓存起来，可以提高编译速度 Clean 然后 build 工程]]></content>
+      <categories>
+        <category>iOS</category>
+      </categories>
+      <tags>
+        <tag>iOS</tag>
+        <tag>pch</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[Ubuntu报错]]></title>
     <url>%2Fpost%2Fbe0d86cc.html</url>
     <content type="text"><![CDATA[Ubuntu添加源的时候报下面的错误时：sudo: add-apt-repository: command not found 依次安装： sudo apt-get install python-software-properties sudo apt install software-properties-common sudo apt-get update]]></content>
@@ -8,8 +45,8 @@
         <category>Ubuntu</category>
       </categories>
       <tags>
-        <tag>Ubuntu</tag>
         <tag>服务器</tag>
+        <tag>Ubuntu</tag>
       </tags>
   </entry>
   <entry>
@@ -20,8 +57,8 @@
         <category>Apache</category>
       </categories>
       <tags>
-        <tag>服务器</tag>
         <tag>Apache</tag>
+        <tag>服务器</tag>
         <tag>常用</tag>
       </tags>
   </entry>
@@ -33,8 +70,8 @@
         <category>Git</category>
       </categories>
       <tags>
-        <tag>Git</tag>
         <tag>Ubuntu</tag>
+        <tag>Git</tag>
       </tags>
   </entry>
   <entry>
@@ -106,8 +143,8 @@
         <category>Tools</category>
       </categories>
       <tags>
-        <tag>CocoaPods</tag>
         <tag>iOS</tag>
+        <tag>CocoaPods</tag>
       </tags>
   </entry>
 </search>
