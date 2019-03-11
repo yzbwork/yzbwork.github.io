@@ -20,8 +20,8 @@
         <category>iOS</category>
       </categories>
       <tags>
-        <tag>HTTPS</tag>
         <tag>iOS</tag>
+        <tag>HTTPS</tag>
         <tag>服务器证书</tag>
       </tags>
   </entry>
@@ -70,8 +70,8 @@
         <category>Git</category>
       </categories>
       <tags>
-        <tag>Ubuntu</tag>
         <tag>Git</tag>
+        <tag>Ubuntu</tag>
       </tags>
   </entry>
   <entry>
@@ -143,8 +143,8 @@
         <category>Tools</category>
       </categories>
       <tags>
-        <tag>iOS</tag>
         <tag>CocoaPods</tag>
+        <tag>iOS</tag>
       </tags>
   </entry>
 </search>
