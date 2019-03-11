@@ -109,7 +109,7 @@
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/3/7/16955c9eca389d6d?w=1080&h=1020&f=png&s=253214">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/3/7/16955c9eca4602e6?w=561&h=210&f=png&s=59876">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/3/7/16955c9eca4af431?w=705&h=320&f=png&s=22201">
-<meta property="og:updated_time" content="2019-03-08T07:27:30.193Z">
+<meta property="og:updated_time" content="2019-03-11T13:52:14.389Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Jenkins持续化集成，自动打包，OTA分发">
 <meta name="twitter:description" content="Jenkins设置自动定时运行脚本，打包生成ipa文件和plist文件，成功之后，自动发送钉钉消息给测试人员，测试人员打开下载地址，OTA安装。">
@@ -420,12 +420,24 @@
                 
               
 
-              <time title="创建时间：2019-03-08 00:46:46 / 修改时间：15:27:30" itemprop="dateCreated datePublished" datetime="2019-03-08T00:46:46+08:00">2019-03-08</time>
+              <time title="创建时间：2019-03-08 00:46:46" itemprop="dateCreated datePublished" datetime="2019-03-08T00:46:46+08:00">2019-03-08</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-03-11 21:52:14" itemprop="dateModified" datetime="2019-03-11T21:52:14+08:00">2019-03-11</time>
               
             
           </span>
@@ -535,7 +547,7 @@
 <blockquote>
 <p>环境：macOS10.12.5，Xcode 8.3.3，ruby2.4.0，java1.8.0</p>
 </blockquote>
-<h3 id="搭建Jenkins"><a href="#搭建Jenkins" class="headerlink" title="搭建Jenkins"></a><a href="https://yzbwork.github.io/2019/03/08/Jenkins搭建/" rel="external nofollow noopener noreferrer" target="_blank">搭建Jenkins</a></h3><h3 id="自动打包"><a href="#自动打包" class="headerlink" title="自动打包"></a>自动打包</h3><p>自动打包用的是一个自动打包的脚本：PPAutoPackageScript ，GitHub地址：<a href="https://github.com/jkpang/PPAutoPackageScript" rel="external nofollow noopener noreferrer" target="_blank">https://github.com/jkpang/PPAutoPackageScript</a><br>PPAutoPackageScript在本地的用法见GitHub，作者写了详细的使用方法。整体来说没有难度，按步骤来就行。先把脚本里面需要自己修改的部分，修改完成之后，测试打包没问题，再继续下一步。<br><strong><em>注意：Xcode证书管理部分不要设置自动管理，否则会报错</em></strong></p>
+<h3 id="搭建Jenkins"><a href="#搭建Jenkins" class="headerlink" title="搭建Jenkins"></a><a href="https://blog.travelfun.top/post/d6658693.html">搭建Jenkins</a></h3><h3 id="自动打包"><a href="#自动打包" class="headerlink" title="自动打包"></a>自动打包</h3><p>自动打包用的是一个自动打包的脚本：PPAutoPackageScript ，GitHub地址：<a href="https://github.com/jkpang/PPAutoPackageScript" rel="external nofollow noopener noreferrer" target="_blank">https://github.com/jkpang/PPAutoPackageScript</a><br>PPAutoPackageScript在本地的用法见GitHub，作者写了详细的使用方法。整体来说没有难度，按步骤来就行。先把脚本里面需要自己修改的部分，修改完成之后，测试打包没问题，再继续下一步。<br><strong><em>注意：Xcode证书管理部分不要设置自动管理，否则会报错</em></strong></p>
 <h3 id="OTA分发部分"><a href="#OTA分发部分" class="headerlink" title="OTA分发部分"></a>OTA分发部分</h3><p>OTA分发，我是在本地搭建的服务器，目前OTA分发只支持Https，所以需要OpenSSL自制证书。后面有具体方法，先搭建服务器。</p>
 <h4 id="启动服务器"><a href="#启动服务器" class="headerlink" title="启动服务器"></a>启动服务器</h4><p>macOS 自带apache服务，所以终端输入 sudo apachectl start ，浏览器输入<a href="http://127.0.0.1" rel="external nofollow noopener noreferrer" target="_blank">http://127.0.0.1</a>，如果出现It Works!，OK，服务器启动成功。</p>
 <h4 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h4><p>服务器默认目录<strong>“/Library/WebServer/Documents/“</strong>，编辑<strong>“/etc/apache2/httpd.conf “</strong>，找到</p>
