@@ -393,11 +393,11 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">HTTPS-适配
+          <h2 class="post-title" itemprop="name headline">HTTPS-适配
 
               
             
-          </h1>
+          </h2>
         
 
         <div class="post-meta">
@@ -531,7 +531,7 @@
 
       
         <h4 id="需要先检查服务器证书："><a href="#需要先检查服务器证书：" class="headerlink" title="需要先检查服务器证书："></a>需要先检查服务器证书：</h4><p>（三种方法，推荐最后一种）</p>
-<h5 id="在腾讯云ATS上检测，"><a href="#在腾讯云ATS上检测，" class="headerlink" title="在腾讯云ATS上检测，"></a>在腾讯云ATS上检测，</h5><p>  <a href="https://www.qcloud.com/product/ssl" target="_blank" rel="noopener">https://www.qcloud.com/product/ssl</a></p>
+<h5 id="在腾讯云ATS上检测，"><a href="#在腾讯云ATS上检测，" class="headerlink" title="在腾讯云ATS上检测，"></a>在腾讯云ATS上检测，</h5><p>  <a href="https://www.qcloud.com/product/ssl" rel="external nofollow noopener noreferrer" target="_blank">https://www.qcloud.com/product/ssl</a></p>
 <h5 id="直接看证书，注意证书签名算法，"><a href="#直接看证书，注意证书签名算法，" class="headerlink" title="直接看证书，注意证书签名算法，"></a>直接看证书，注意证书签名算法，</h5><p><img src="http://upload-images.jianshu.io/upload_images/1130084-94bff11cb1da8c10.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="1.png"></p>
 <h5 id="mac终端检查，（以百度为例）"><a href="#mac终端检查，（以百度为例）" class="headerlink" title="mac终端检查，（以百度为例）"></a>mac终端检查，（以百度为例）</h5><pre><code>nscurl --ats-diagnostics https://baidu.com
 </code></pre><p>一堆测试结果，注意看Result是PASS的，<br>如：<br><img src="http://upload-images.jianshu.io/upload_images/1130084-17982d70cbe18c31.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="2.png"><br>这种result是通过的，说明需要在info.plist里面添加该属性为false，即可通过。</p>
@@ -795,7 +795,7 @@
                   
                     
                   
-                  <a href="https://github.com/yzbwork" title="GitHub &rarr; https://github.com/yzbwork" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  <a href="https://github.com/yzbwork" title="GitHub &rarr; https://github.com/yzbwork" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
                 </span>
               
                 <span class="links-of-author-item">
@@ -806,7 +806,7 @@
                   
                     
                   
-                  <a href="mailto:yzbwork@163.com" title="E-Mail &rarr; mailto:yzbwork@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  <a href="mailto:yzbwork@163.com" title="E-Mail &rarr; mailto:yzbwork@163.com" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
                 </span>
               
                 <span class="links-of-author-item">
@@ -817,7 +817,7 @@
                   
                     
                   
-                  <a href="https://juejin.im/user/5a94c9935188257a766352f4/posts" title="JueJin &rarr; https://juejin.im/user/5a94c9935188257a766352f4/posts" rel="noopener" target="_blank"><i class="fa fa-fw fa-bookmark"></i>JueJin</a>
+                  <a href="https://juejin.im/user/5a94c9935188257a766352f4/posts" title="JueJin &rarr; https://juejin.im/user/5a94c9935188257a766352f4/posts" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-bookmark"></i>JueJin</a>
                 </span>
               
             </div>
@@ -1375,6 +1375,16 @@
   
 
   
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
 
   
 

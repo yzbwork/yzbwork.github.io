@@ -394,11 +394,11 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Jenkins持续化集成，自动打包，OTA分发
+          <h2 class="post-title" itemprop="name headline">Jenkins持续化集成，自动打包，OTA分发
 
               
             
-          </h1>
+          </h2>
         
 
         <div class="post-meta">
@@ -535,9 +535,9 @@
 <blockquote>
 <p>环境：macOS10.12.5，Xcode 8.3.3，ruby2.4.0，java1.8.0</p>
 </blockquote>
-<h3 id="搭建Jenkins"><a href="#搭建Jenkins" class="headerlink" title="搭建Jenkins"></a><a href="https://yzbwork.github.io/2019/03/08/Jenkins搭建/" target="_blank" rel="noopener">搭建Jenkins</a></h3><h3 id="自动打包"><a href="#自动打包" class="headerlink" title="自动打包"></a>自动打包</h3><p>自动打包用的是一个自动打包的脚本：PPAutoPackageScript ，GitHub地址：<a href="https://github.com/jkpang/PPAutoPackageScript" target="_blank" rel="noopener">https://github.com/jkpang/PPAutoPackageScript</a><br>PPAutoPackageScript在本地的用法见GitHub，作者写了详细的使用方法。整体来说没有难度，按步骤来就行。先把脚本里面需要自己修改的部分，修改完成之后，测试打包没问题，再继续下一步。<br><strong><em>注意：Xcode证书管理部分不要设置自动管理，否则会报错</em></strong></p>
+<h3 id="搭建Jenkins"><a href="#搭建Jenkins" class="headerlink" title="搭建Jenkins"></a><a href="https://yzbwork.github.io/2019/03/08/Jenkins搭建/" rel="external nofollow noopener noreferrer" target="_blank">搭建Jenkins</a></h3><h3 id="自动打包"><a href="#自动打包" class="headerlink" title="自动打包"></a>自动打包</h3><p>自动打包用的是一个自动打包的脚本：PPAutoPackageScript ，GitHub地址：<a href="https://github.com/jkpang/PPAutoPackageScript" rel="external nofollow noopener noreferrer" target="_blank">https://github.com/jkpang/PPAutoPackageScript</a><br>PPAutoPackageScript在本地的用法见GitHub，作者写了详细的使用方法。整体来说没有难度，按步骤来就行。先把脚本里面需要自己修改的部分，修改完成之后，测试打包没问题，再继续下一步。<br><strong><em>注意：Xcode证书管理部分不要设置自动管理，否则会报错</em></strong></p>
 <h3 id="OTA分发部分"><a href="#OTA分发部分" class="headerlink" title="OTA分发部分"></a>OTA分发部分</h3><p>OTA分发，我是在本地搭建的服务器，目前OTA分发只支持Https，所以需要OpenSSL自制证书。后面有具体方法，先搭建服务器。</p>
-<h4 id="启动服务器"><a href="#启动服务器" class="headerlink" title="启动服务器"></a>启动服务器</h4><p>macOS 自带apache服务，所以终端输入 sudo apachectl start ，浏览器输入<a href="http://127.0.0.1" target="_blank" rel="noopener">http://127.0.0.1</a>，如果出现It Works!，OK，服务器启动成功。</p>
+<h4 id="启动服务器"><a href="#启动服务器" class="headerlink" title="启动服务器"></a>启动服务器</h4><p>macOS 自带apache服务，所以终端输入 sudo apachectl start ，浏览器输入<a href="http://127.0.0.1" rel="external nofollow noopener noreferrer" target="_blank">http://127.0.0.1</a>，如果出现It Works!，OK，服务器启动成功。</p>
 <h4 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h4><p>服务器默认目录<strong>“/Library/WebServer/Documents/“</strong>，编辑<strong>“/etc/apache2/httpd.conf “</strong>，找到</p>
 <blockquote>
 <p>DocumentRoot “/Library/WebServer/Documents”<br> <directory " library webserver documents"></directory></p>
@@ -645,7 +645,7 @@ cat &lt;&lt; EOF &gt; manifest.plist
 &lt;string&gt;$scheme_name&lt;/string&gt;
 &lt;...&gt;
 EOF
-</code></pre><p> &lt;…&gt;部分跟前面的plist模版一样，不再重复，可以直接复制模版修改。这里的下载路径包括脚本里的export_path也即输出路径，根据自己的需求修改，如果是直接生成在根目录下，<a href="https://192.168.1.35/${ipa_name}.ipa" target="_blank" rel="noopener">https://192.168.1.35/${ipa_name}.ipa</a>这样写，生成的新ipa文件会覆盖旧的。我这里是让它每次根据版本号输出到不同的文件夹。</p>
+</code></pre><p> &lt;…&gt;部分跟前面的plist模版一样，不再重复，可以直接复制模版修改。这里的下载路径包括脚本里的export_path也即输出路径，根据自己的需求修改，如果是直接生成在根目录下，<a href="https://192.168.1.35/${ipa_name}.ipa" rel="external nofollow noopener noreferrer" target="_blank">https://192.168.1.35/${ipa_name}.ipa</a>这样写，生成的新ipa文件会覆盖旧的。我这里是让它每次根据版本号输出到不同的文件夹。</p>
 <p>脚本文件修改完毕之后，登陆Jenkins，进入之前建的项目中，点击配置，在钉钉通知消息这一步的前面<strong>增加构建步骤</strong>，如图：<br><img src="https://user-gold-cdn.xitu.io/2019/3/7/16955c9eca4af431?w=705&amp;h=320&amp;f=png&amp;s=22201" alt="增加构建步骤.png"><br>第一行是打开脚本所在的位置，第二行运行脚本。<br>OK，保存，返回项目点击<strong>立即构建</strong>。测试没有问题之后，再在配置里面设置定时构建，语法点击输入框后面的问号有参考。<br>以上就是整个全部流程，自己正在用，网上好多步骤不完整或是比较老，出现错误参考每一步的 <strong><em>注意</em></strong> 部分，特别要注意iOS10 出现无法连接到***的错误！！！。有错误的地方请指正，互相交流。</p>
 
       
@@ -888,7 +888,7 @@ EOF
                   
                     
                   
-                  <a href="https://github.com/yzbwork" title="GitHub &rarr; https://github.com/yzbwork" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  <a href="https://github.com/yzbwork" title="GitHub &rarr; https://github.com/yzbwork" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
                 </span>
               
                 <span class="links-of-author-item">
@@ -899,7 +899,7 @@ EOF
                   
                     
                   
-                  <a href="mailto:yzbwork@163.com" title="E-Mail &rarr; mailto:yzbwork@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  <a href="mailto:yzbwork@163.com" title="E-Mail &rarr; mailto:yzbwork@163.com" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
                 </span>
               
                 <span class="links-of-author-item">
@@ -910,7 +910,7 @@ EOF
                   
                     
                   
-                  <a href="https://juejin.im/user/5a94c9935188257a766352f4/posts" title="JueJin &rarr; https://juejin.im/user/5a94c9935188257a766352f4/posts" rel="noopener" target="_blank"><i class="fa fa-fw fa-bookmark"></i>JueJin</a>
+                  <a href="https://juejin.im/user/5a94c9935188257a766352f4/posts" title="JueJin &rarr; https://juejin.im/user/5a94c9935188257a766352f4/posts" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-bookmark"></i>JueJin</a>
                 </span>
               
             </div>
@@ -1468,6 +1468,16 @@ EOF
   
 
   
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
 
   
 
